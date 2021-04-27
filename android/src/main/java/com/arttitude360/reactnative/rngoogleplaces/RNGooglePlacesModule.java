@@ -8,10 +8,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.Manifest.permission;
 import android.content.pm.PackageManager;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresPermission;
-import android.support.v4.content.ContextCompat;
-import 	android.support.v4.app.ActivityCompat;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.ACCESS_WIFI_STATE;
@@ -366,8 +366,18 @@ public class RNGooglePlacesModule extends ReactContextBaseJavaModule implements 
 
         if (selectedFields.contains(Place.Field.LAT_LNG)) {
             WritableMap locationMap = Arguments.createMap();
-            locationMap.putDouble("latitude", place.getLatLng().latitude);
-            locationMap.putDouble("longitude", place.getLatLng().longitude);
+
+            try {
+                locationMap.putDouble("latitude", place.getLatLng().latitude);
+            } catch (NullPointerException e) {
+                locationMap.putDouble("latitude", 0);
+            }
+
+            try {
+                locationMap.putDouble("longitude", place.getLatLng().longitude);
+            } catch (NullPointerException e) {
+                locationMap.putDouble("longitude", 0);
+            }
 
             map.putMap("location", locationMap);
         }
